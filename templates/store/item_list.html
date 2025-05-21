@@ -1,0 +1,68 @@
+{% extends 'store/base.html' %}
+{% block title %}<title>Items | SAAF Store</title>{% endblock title %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4 text-center">Item List</h2>
+
+    <!-- Search & Sort -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-6 mb-2">
+            <input type="text" name="search" class="form-control" placeholder="Search by item name" value="{{ search_query }}">
+        </div>
+        <div class="col-md-4 mb-2">
+            <select name="sort" class="form-control">
+                <option value="name" {% if sort_by == "name" %}selected{% endif %}>Sort by Name</option>
+                <option value="price" {% if sort_by == "price" %}selected{% endif %}>Sort by Price</option>
+            </select>
+        </div>
+        <div class="col-md-2 mb-2">
+            <button type="submit" class="btn btn-primary w-100">Apply</button>
+        </div>
+    </form>
+
+    <!-- Item Cards -->
+    <div class="row">
+        {% for item in items %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">💰 ₹{{ item.price }}</p>
+                    <p class="card-text text-muted small">Stock: {{ item.quantity }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'edit_item' item.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'delete_item' item.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No items found.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if items.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ items.previous_page_number }}&search={{ search_query }}&sort={{ sort_by }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for page in items.paginator.page_range %}
+            <li class="page-item {% if items.number == page %}active{% endif %}">
+                <a class="page-link" href="?page={{ page }}&search={{ search_query }}&sort={{ sort_by }}">{{ page }}</a>
+            </li>
+            {% endfor %}
+
+            {% if items.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ items.next_page_number }}&search={{ search_query }}&sort={{ sort_by }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock content %}

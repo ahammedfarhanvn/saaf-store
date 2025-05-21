@@ -1,0 +1,24 @@
+{% extends 'store/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Money</title>
+    <link rel="stylesheet" href="{% static "styles/bootstrap.min.css" %}">
+</head>
+    {% block content %}
+    <div class="container">
+        <h1 class="mt-5">Add Money to Wallet</h1>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="customer_number" value="{{ customer_number }}">  <!-- Hidden field for customer_number -->
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter Amount" min="0.01" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-success">Add Money</button>
+        </form>
+    </div>
+    {% endblock content %}

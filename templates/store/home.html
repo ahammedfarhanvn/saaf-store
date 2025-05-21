@@ -1,0 +1,67 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Welcome | SAAF Store</title>
+{% endblock title %}
+
+{% block content %}
+<div class="container py-3">
+    <!-- Hero Section -->
+    <div class="text-center mb-2" >
+        <img src="{% static 'images/saaf_logo.png' %}" class="" width="120" height="120" alt="Store Logo">
+        <h1 class="mt-3">Welcome to <strong>SAAF Store</strong></h1>
+        <p class="lead">Manage customers, items, and purchases with ease.</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row text-center mb-2">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Total Customers</h5>
+                    <p class="display-6">{{ total_customers }}</p> <!-- You can populate this with backend count -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Total Items</h5>
+                    <p class="display-6">{{ total_items }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">Purchases</h5>
+                    <p class="display-6">{{ total_purchases }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'add_customer' %}" class="btn btn-outline-primary w-100 py-3 shadow-sm">➕ Add Customer</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary w-100 py-3 shadow-sm">👥 View Customers</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'add_item' %}" class="btn btn-outline-primary w-100 py-3 shadow-sm">📦 Add Item</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'item_list' %}" class="btn btn-outline-secondary w-100 py-3 shadow-sm">📋 View Items</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'item_purchase' %}" class="btn btn-outline-success w-100 py-3 shadow-sm">🛒 Purchase Item</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{% url 'check_wallet_balance' %}" class="btn btn-outline-dark w-100 py-3 shadow-sm">💰 Wallet Balance</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

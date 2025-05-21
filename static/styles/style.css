@@ -1,0 +1,24 @@
+* {
+    user-select: none;
+}
+
+.bg-blue{
+    background-color: blue !important;
+}
+
+.table-container{
+    background-color: #bdcedf;
+    padding: 20px;
+}
+
+.customerdetiels{
+    background-color: #10a9bd;
+    padding: 20px;
+    width: auto !important;
+    height: auto !important;
+
+}
+
+.bg-purchased{
+    background-color: #ff2c2c !important;
+}

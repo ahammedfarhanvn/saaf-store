@@ -1,0 +1,127 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block title %}
+    <title>Purchase Items | SAAF Store</title>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">🛒 Purchase Items</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="customer_number" class="form-label fw-semibold">Customer Number:</label>
+                        <input type="text" id="customer_number" name="customer_number" class="form-control" placeholder="Enter Customer Number" oninput="fetchCustomerDetails()" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="customer_name" class="form-label fw-semibold">Customer Name:</label>
+                        <input type="text" id="customer_name" name="customer_name" class="form-control bg-light" readonly>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="customer_balance" class="form-label fw-semibold">Customer Balance:</label>
+                        <input type="text" id="customer_balance" name="customer_balance" class="form-control bg-light" readonly>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div id="item_fields">
+                    <div class="row g-3 align-items-end mb-3 item-row">
+                        <div class="col-md-6">
+                            <label class="form-label">Select Item:</label>
+                            <select name="item" class="form-select" onchange="updateTotalPrice()" required>
+                                <option value="">Choose...</option>
+                                {% for item in items %}
+                                    <option value="{{ item.id }}" data-price="{{ item.price }}">{{ item.name }} - ₹{{ item.price }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Quantity:</label>
+                            <input type="number" name="quantity" class="form-control" placeholder="Qty" min="1" value="1" oninput="updateTotalPrice()" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger btn-sm mt-4" onclick="removeItemField(this)">🗑 Remove</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <button type="button" class="btn btn-outline-secondary" onclick="addItemField()">➕ Add Another Item</button>
+                    <h5 id="total_price" class="text-success mb-0">Total Price: ₹0.00</h5>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success w-100 py-2 fs-5">✅ Confirm Purchase</button>
+                </div>
+            </form>
+            <a href="{% url 'home' %}" class="btn btn-link mt-3">← Back to Home</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fetchCustomerDetails() {
+        const customerNumber = document.getElementById('customer_number').value.trim();
+        if (!customerNumber) return;
+
+        fetch(`/get_customer_details/${customerNumber}/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('customer_name').value = data.customer_name || 'Not found';
+                document.getElementById('customer_balance').value = data.balance !== null ? `₹${parseFloat(data.balance).toFixed(2)}` : '₹0.00';
+            })
+            .catch(() => {
+                document.getElementById('customer_name').value = 'Error fetching data';
+                document.getElementById('customer_balance').value = '';
+            });
+    }
+
+    function addItemField() {
+        const itemFields = document.getElementById("item_fields");
+        const newRow = document.createElement("div");
+        newRow.classList.add("row", "g-3", "align-items-end", "mb-3", "item-row");
+
+        newRow.innerHTML = `
+            <div class="col-md-6">
+                <select name="item" class="form-select" onchange="updateTotalPrice()" required>
+                    <option value="">Choose...</option>
+                    {% for item in items %}
+                        <option value="{{ item.id }}" data-price="{{ item.price }}">{{ item.name }} - ₹{{ item.price }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="number" name="quantity" class="form-control" placeholder="Qty" min="1" value="1" oninput="updateTotalPrice()" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeItemField(this)">🗑</button>
+            </div>
+        `;
+        itemFields.appendChild(newRow);
+    }
+
+    function removeItemField(button) {
+        button.closest('.item-row').remove();
+        updateTotalPrice();
+    }
+
+    function updateTotalPrice() {
+        let total = 0;
+        document.querySelectorAll("#item_fields .item-row").forEach(row => {
+            const itemSelect = row.querySelector("select[name='item']");
+            const quantityInput = row.querySelector("input[name='quantity']");
+            const price = parseFloat(itemSelect.selectedOptions[0]?.dataset.price || 0);
+            const qty = parseInt(quantityInput.value || 0);
+            total += price * qty;
+        });
+        document.getElementById('total_price').innerText = `Total Price: ₹${total.toFixed(2)}`;
+    }
+</script>
+{% endblock %}

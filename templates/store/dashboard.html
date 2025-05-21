@@ -1,0 +1,109 @@
+{% extends 'store/base.html' %}
+{% block title %}<title>Dashboard | SAAF Store</title>{% endblock title %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="text-center mb-4">📊 SAAF Store Dashboard</h2>
+
+    <!-- Summary Cards -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5>👥 Customers</h5>
+                    <p class="display-6">{{ total_customers }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5>📦 Items</h5>
+                    <p class="display-6">{{ total_items }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5>🛒 Purchases</h5>
+                    <p class="display-6">{{ total_purchases }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5>💰 Wallet Balance</h5>
+                    <p class="display-6">₹{{ total_wallet_balance }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Purchases -->
+    <h4 class="mb-3">🕘 Recent Purchases</h4>
+    <div class="table-responsive mb-5">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in recent_purchases %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ purchase.customer.name }}</td>
+                    <td>{{ purchase.item.name }}</td>
+                    <td>{{ purchase.quantity }}</td>
+                    <td>{{ purchase.date|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No purchases found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Wallet Chart -->
+    <h4 class="mb-3">📈 Wallet Balance per Customer</h4>
+    <canvas id="walletChart" height="100"></canvas>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('walletChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for c in customers %}"{{ c.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Wallet Balance (₹)',
+            data: [{% for c in customers %}{{ c.balance }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        }
+    }
+});
+</script>
+{% endblock content %}

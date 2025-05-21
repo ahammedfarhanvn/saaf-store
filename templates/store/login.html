@@ -1,0 +1,27 @@
+{% extends "store/base.html" %}
+{% block title %}<title>Login | SAAF Store</title>{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 400px;">
+    <h3 class="text-center mb-4">🔐 Login to SAAF Store</h3>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            Invalid username or password. Please try again.
+        </div>
+    {% endif %}
+
+    <form method="post" class="card shadow-sm p-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+</div>
+{% endblock %}

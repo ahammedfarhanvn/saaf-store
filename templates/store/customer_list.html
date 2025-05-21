@@ -1,0 +1,68 @@
+{% extends 'store/base.html' %}
+{% block title %}<title>Customers | SAAF Store</title>{% endblock title %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4 text-center">Customer List</h2>
+
+    <!-- Search & Sort Bar -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-6 mb-2">
+            <input type="text" name="search" class="form-control" placeholder="Search by name" value="{{ search_query }}">
+        </div>
+        <div class="col-md-4 mb-2">
+            <select name="sort" class="form-control">
+                <option value="name" {% if sort_by == "name" %}selected{% endif %}>Sort by Name</option>
+                <option value="wallet" {% if sort_by == "wallet" %}selected{% endif %}>Sort by Wallet Balance</option>
+            </select>
+        </div>
+        <div class="col-md-2 mb-2">
+            <button type="submit" class="btn btn-primary w-100">Apply</button>
+        </div>
+    </form>
+
+    <!-- Customer Cards -->
+    <div class="row">
+        {% for customer in customers %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">{{ customer.name }}</h5>
+                    <p class="card-text mb-1">📞 {{ customer.customer_number }}</p>
+                    <p class="card-text">💼 Wallet: ₹{{ customer.balance }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'edit_customer' customer.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'delete_customer' customer.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No customers found.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if customers.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ customers.previous_page_number }}&search={{ search_query }}&sort={{ sort_by }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for page in customers.paginator.page_range %}
+            <li class="page-item {% if customers.number == page %}active{% endif %}">
+                <a class="page-link" href="?page={{ page }}&search={{ search_query }}&sort={{ sort_by }}">{{ page }}</a>
+            </li>
+            {% endfor %}
+
+            {% if customers.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ customers.next_page_number }}&search={{ search_query }}&sort={{ sort_by }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock content %}

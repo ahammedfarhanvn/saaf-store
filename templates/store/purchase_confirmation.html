@@ -1,0 +1,19 @@
+{% extends 'store/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Customer</title>
+    <link rel="stylesheet" href="{% static "styles/bootstrap.min.css" %}">
+</head>
+{% block content %}
+    <div class="container">
+        <h1 class="mt-5">Purchase Confirmation</h1>
+        <p>Thank you, {{ customer_name }}! Your purchase was successful.</p>
+        <p>Total Amount Deducted: ${{ total_price }}</p>
+        <a href="{% url 'item_purchase' %}" class="btn btn-primary mt-3">Make Another Purchase</a>
+        <a href="{% url 'home' %}" class="btn btn-link mt-3">Back to Home</a>
+    </div>
+{% endblock content %}

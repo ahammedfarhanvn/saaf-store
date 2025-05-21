@@ -1,0 +1,37 @@
+{% extends "store/base.html" %}
+{% block title %}<title>All Purchases | SAAF Store</title>{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">All Transactions</h2>
+    
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>Item</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ transaction.customer.name }}</td>
+                <td>{{ transaction.get_transaction_type_display }}</td>
+                <td>{% if transaction.item %}{{ transaction.item.name }}{% else %}N/A{% endif %}</td>
+                <td>₹{{ transaction.amount }}</td>
+                <td>{{ transaction.timestamp|date:"Y-m-d H:i:s" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No transactions found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
